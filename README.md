@@ -1,1 +1,1 @@
-very basic cpp terminal interface creator
+very basic cpp terminal interface library
