@@ -3,6 +3,9 @@
 #include <vector>
 #include <termios.h>
 
+//Getting char without enter, use this after create Canvas or TerminalSettings
+char Getch();
+
 class TerminalSettings {
     private:
         struct termios old;
@@ -31,11 +34,14 @@ class Canvas{
         void AddOption(const char*);
         void FreeOptions();
         void SetOptions();
-        TerminalSettings t;
+        TerminalSettings term;
     public:
+        //constructor take x and y for create canvas and char for a filler
         Canvas(int, int, char);
         //writes canvas to terminal
         void DrawCanvas();
+        //Set given x y's character as  a input
+        int SetChar(int, int, char);
         //Starts writing at given x and y coordinates and if last one is 0 thats mean its writes if 1 thats mean that length of pixels are converted to a filler as you created canvas
         int SetString(int,int,const char*);
         //Starts writing at given x and y coordinates and if last one is 0 thats mean its writes if 1 thats mean that length of pixels are converted to a filler as you created canvas
@@ -51,10 +57,9 @@ class Canvas{
             options = new Options;
             (AddOption(args), ...);
         }
-        void Reset();
+            void Reset();
         ~Canvas();
     };
 
-char Getch();
 
 #endif

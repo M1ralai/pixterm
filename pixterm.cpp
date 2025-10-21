@@ -5,29 +5,6 @@
 #include <termios.h>
 #include <unistd.h>
 
-TerminalSettings::TerminalSettings() {
-    old = {0};
-
-    if (tcgetattr(STDIN_FILENO, &old) < 0) perror("tcgetattr");
-
-    struct termios newt = old;
-    newt.c_lflag &= ~ICANON; // canonical modu kapat (Enter gerekmez)
-    newt.c_lflag &= ~ECHO;   // karakteri ekrana yazma
-    newt.c_cc[VMIN] = 1;     // minimum okuma
-    newt.c_cc[VTIME] = 0;
-
-    if (tcsetattr(STDIN_FILENO, TCSANOW, &newt) < 0) perror("tcsetattr");
-
-}
-
-TerminalSettings::~TerminalSettings() {
-    tcsetattr(STDIN_FILENO, TCSANOW, &old);
-}
-
-Options::Options() {
-    selected = 0;
-}
-
 void Options::SelectUp() {
     if (selected == 0) {
         selected = values.size() - 1;
@@ -44,24 +21,39 @@ void Options::SelectDown() {
     }
 }
 
+ TerminalSettings::TerminalSettings() {
+    old = {0};
 
-Canvas::Canvas(int given_x, int given_y, char ch) {
-    options = new Options;
+    if (tcgetattr(STDIN_FILENO, &old) < 0) perror("tcgetattr");
+
+    struct termios newt = old;
+    newt.c_lflag &= ~ICANON; // canonical modu kapat (Enter gerekmez)
+    newt.c_lflag &= ~ECHO;   // karakteri ekrana yazma
+    newt.c_cc[VMIN] = 1;     // minimum okuma
+    newt.c_cc[VTIME] = 0;
+
+    if (tcsetattr(STDIN_FILENO, TCSANOW, &newt) < 0) perror("tcsetattr");
+}
+
+TerminalSettings::~TerminalSettings() {
+    tcsetattr(STDIN_FILENO, TCSANOW, &old);
+}
+
+Options::Options() {
+    selected = 0;
+}
+
+
+
+Canvas::Canvas(int given_x, int given_y, char ch) : pixels(given_x * given_y, ch ){
     y = given_y;
     x = given_x;
     filler = ch;
-    pixels.resize(x * y);
-    for (int i = 0; i < x * y; i++)
-    {
-        pixels[i] = filler;
-    }
-    for (int i = 0; i < x; i++)
-    {
+    for (int i = 0; i < x; i++) {
         pixels[i] = '-';
         pixels[i + x * (y - 1)] = '-';
     }
-    for (int i = 0; i < y; i++)
-    {
+    for (int i = 0; i < y; i++) {
         pixels[i * x] = '|';
         pixels[i * x + x - 1] = '|';
     }
@@ -69,14 +61,11 @@ Canvas::Canvas(int given_x, int given_y, char ch) {
 
 
 void Canvas::DrawCanvas() {
-    Reset();
-    SetOptions();
     std::cout << "\33c\e[3J";
-    for (int i = 0; i < y; i++)
-    {
-        for (int j = 0; j < x; j++)
-        {
-            std::cout << pixels[j + i * x];
+    SetOptions();
+    for (int i = 0; i < y; i++) {
+        for (int j = 0; j < x; j++) {
+            std::cout << pixels[j + i *  x];
         }
         std::cout << "\n \r";
     }
@@ -90,6 +79,16 @@ void Canvas::SetOptions() {
         }
     }
 }
+
+int Canvas::SetChar(int given_x, int given_y, char ch) {
+    if(given_x <= x && given_y < y && given_x >= 0 && given_y >= 0) {
+        pixels[given_x + given_y * x] = ch;
+        return 1;
+    } else {
+        return -1;
+    }
+}
+
 int Canvas::SetString(int targetx, int targety, const char *str) {
     if (x - (strlen(str) + targetx) < 0) {
         return -1;
@@ -110,6 +109,7 @@ int Canvas::SetString(int targetx, int targety, std::string str) {
         return 0;
     }
 }
+
 int Canvas::SetFiller(int targetx, int targety, int length) {
     if (x - (length + targetx) < 0)
     {
