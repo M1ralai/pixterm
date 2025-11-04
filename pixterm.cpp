@@ -21,6 +21,7 @@ void Options::SelectDown() {
     }
 }
 
+//burası da genellikle windowsta connio.h ile yapılıyor linux için termios kullandım
  TerminalSettings::TerminalSettings() {
     old = {0};
 
@@ -59,7 +60,7 @@ Canvas::Canvas(int given_x, int given_y, char ch) : pixels(given_x * given_y, ch
     }
 }
 
-
+//Burası linuxa göre yazıldı terminalin temizleme kodu powershellde farklı
 void Canvas::DrawCanvas() {
     std::cout << "\33c\e[3J";
     SetOptions();
