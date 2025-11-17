@@ -116,7 +116,7 @@ int Canvas::SetShape(int targetx, int targety, std::vector<std::vector<char>> sh
     int height = shape.size();
     for(int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
-            if (shape[i][j] != ' ') pixels[targety * x + targetx + i] = shape[i][j];
+            if (shape[i][j] != ' ') pixels[(targety + i) * x + targetx + j] = shape[i][j];
         }
     }
 }
