@@ -46,7 +46,9 @@ class Canvas{
         int SetString(int,int,const char*);
         //Starts writing at given x and y coordinates and if last one is 0 thats mean its writes if 1 thats mean that length of pixels are converted to a filler as you created canvas
         int SetString(int, int, std::string);
-        // Set given x t o given y pixels as a filler
+        //set shapes into the canvas starting from given x and y
+        int SetShape(int, int, std::vector<std::vector<char>>);
+        // Set given x to given y pixels as a filler
         int SetFiller(int,int,int);
         //Takes .txt file and row number and set all lines of canvas as them
         void SetScene(std::string, int);
