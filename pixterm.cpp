@@ -63,7 +63,7 @@ Canvas::Canvas(int given_x, int given_y, char ch) : pixels(given_x * given_y, ch
 //Burası linuxa göre yazıldı terminalin temizleme kodu powershellde farklı
 void Canvas::DrawCanvas() {
     std::cout << "\33c\e[3J";
-    SetOptions();
+    if(options != nullptr) SetOptions();
     for (int i = 0; i < y; i++) {
         for (int j = 0; j < x; j++) {
             std::cout << pixels[j + i *  x];
