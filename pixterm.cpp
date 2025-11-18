@@ -114,11 +114,13 @@ int Canvas::SetString(int targetx, int targety, std::string str) {
 int Canvas::SetShape(int targetx, int targety, std::vector<std::vector<char>> shape) {
     int width = shape[0].size();
     int height = shape.size();
+    if (targetx + shape[0].size() > x &&  targety + shape.size() > y ) return -1;
     for(int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
             if (shape[i][j] != ' ') pixels[(targety + i) * x + targetx + j] = shape[i][j];
         }
     }
+    return 0;
 }
 
 int Canvas::SetFiller(int targetx, int targety, int length) {
